@@ -4,70 +4,61 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { MediaComponent } from './media.component';
-import { of, throwError } from 'rxjs';
 
 describe('MediaComponent', () => {
   let component: MediaComponent;
   let fixture: ComponentFixture<MediaComponent>;
-  let httpTestingController: HttpTestingController;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MediaComponent],
+      imports: [HttpClientTestingModule],
+      declarations: [MediaComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MediaComponent);
     component = fixture.componentInstance;
+    httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
+  });
 
-    httpTestingController = TestBed.inject(HttpTestingController);
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+
+    const req = httpMock.expectOne('assets/table.json');
+    req.flush({ table1: [], table2: [] });
   });
 
-  it('should calculate the correct mean from the JSON data', () => {
+  it('should calculate the correct mean for both tables from JSON file', () => {
     const mockData = {
-      column1: [160, 591, 114, 229, 230, 270, 128, 1657, 624, 1503],
+      table1: [160, 591, 114, 229, 230, 270, 128, 1657, 624, 1503],
+      table2: [15.0, 69.9, 6.5, 22.4, 28.4, 65.9, 19.4, 198.7, 38.8, 138.2],
     };
 
-    spyOn(component['http'], 'get').and.returnValue(of(mockData));
+    const req = httpMock.expectOne('assets/table.json');
+    req.flush(mockData);
 
-    // Llamar a la función de calcular la media
-    component.calculateMeanFromFile('assets/colum1.json');
+    const expectedMeanTable1 =
+      (160 + 591 + 114 + 229 + 230 + 270 + 128 + 1657 + 624 + 1503) / 10;
+    const expectedMeanTable2 =
+      (15.0 + 69.9 + 6.5 + 22.4 + 28.4 + 65.9 + 19.4 + 198.7 + 38.8 + 138.2) /
+      10;
 
-    // Verificar que la media calculada sea la correcta
-    expect(component.mean).toBeCloseTo(550.6, 1);
+    expect(component.meanTable1).toBeCloseTo(expectedMeanTable1, 1);
+    expect(component.meanTable2).toBeCloseTo(expectedMeanTable2, 1);
   });
 
-  it('should handle empty data and set mean to null', () => {
-    const mockData = { column1: [] };
+  it('should handle empty data from the JSON file', () => {
+    const mockData = { table1: [], table2: [] };
 
-    spyOn(component['http'], 'get').and.returnValue(of(mockData));
+    const req = httpMock.expectOne('assets/table.json');
+    req.flush(mockData);
 
-    // Llamar a la función de calcular la media
-    component.calculateMeanFromFile('assets/colum1.json');
-
-    // Verificar que la media sea null (no hay datos)
-    expect(component.mean).toBeNaN();
-  });
-
-  it('should handle HTTP error gracefully', () => {
-    spyOn(component['http'], 'get').and.returnValue(
-      throwError('Error al leer el archivo')
-    );
-
-    // Llamar a la función de calcular la media
-    component.calculateMeanFromFile('assets/colum1.json');
-
-    // Verificar que la media sea null y se registre un error
-    expect(component.mean).toBeNull();
-  });
-
-  it('should correctly calculate the mean', () => {
-    const numbers = [10, 20, 30];
-    const mean = component.calculateMean(numbers);
-    expect(mean).toBe(20);
+    expect(component.meanTable1).toBeNaN();
+    expect(component.meanTable2).toBeNaN();
   });
 });
