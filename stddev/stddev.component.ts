@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
-import { MediaComponent } from '../media/media.component';
+import { Component } from "@angular/core";
+import { MediaComponent } from "../media/media.component";
 
 @Component({
-  selector: 'app-stddev',
+  selector: "app-stddev",
   standalone: true,
   imports: [],
-  templateUrl: './stddev.component.html',
-  styleUrl: './stddev.component.css',
+  templateUrl: "./stddev.component.html",
+  styleUrls: ["./stddev.component.css"],
 })
 export class StddevComponent {
   constructor(private mediaComponent: MediaComponent) {}
