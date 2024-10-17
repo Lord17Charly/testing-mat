@@ -22,12 +22,12 @@ describe('MediaComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should return media = 550.6 for the given input (columna1)', () => {
+  it('Should return media =550.6 if input is [160,591,114,229,230,270,128,1657,624,1503]', () => {
     const media = component.obtenerMedia(numerosColumna1);
     expect(media).toBeCloseTo(550.6, 1);
   });
 
-  it('should return media = 60.32 for the given input (columna2)', () => {
+  it('Should return media =60.32 if input is [15.0,69.9,6.5,22.4,28.4,65.9,19.4,198.7,38.8,138.2]', () => {
     const media = component.obtenerMedia(numerosColumna2);
     expect(media).toBeCloseTo(60.32, 2);
   });
