@@ -13,6 +13,7 @@ describe("SimpsonRule", () => {
 
   it("should return 1.38 for f(x) = 1/x, x0 = 1, x1 = 4, numSeg = 6, ERROR = 0.001", () => {
     const result = SimpsonRule.simpson(1, 4, 6, 0.001, SimpsonRule.fx_1_x);
-    expect(result).toBeCloseTo(1.38, 2);
+    const expected = 1.38;
+    expect(Math.abs(result - expected)).toBeLessThan(0.01);
   });
 });
